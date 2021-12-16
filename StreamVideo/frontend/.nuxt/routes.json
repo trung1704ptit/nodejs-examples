@@ -1,0 +1,16 @@
+[
+  {
+    "name": "player-name",
+    "path": "/player/:name?",
+    "component": "/home/trung/learning/projects/nodejs-examples/StreamVideo/frontend/pages/player/_name.vue",
+    "chunkName": "pages/player/_name",
+    "_name": "_80c8592c"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "/home/trung/learning/projects/nodejs-examples/StreamVideo/frontend/pages/index.vue",
+    "chunkName": "pages/index",
+    "_name": "_eb5291d8"
+  }
+]

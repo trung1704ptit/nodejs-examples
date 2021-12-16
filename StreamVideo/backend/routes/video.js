@@ -12,6 +12,12 @@ router.get('/', (req, res) => {
 })
 
 
+// get caption
+router.get('/video/:id/caption', (req, res) => {
+    return res.sendFile(`assets/captions/${req.params.id}.vtt`, {root: './'})
+})
+
+
 // get single video
 router.get('/:id/data', (req, res) => {
     const id = parseInt(req.params.id, 10)
