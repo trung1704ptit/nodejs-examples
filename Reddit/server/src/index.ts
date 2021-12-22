@@ -14,6 +14,7 @@ import mongoose from 'mongoose'
 import { COOKIE_NAME, __prod__ } from './utils/constants'
 import { Context } from './types/Context';
 import { PostResolver } from './resolvers/post';
+import cors from 'cors'
 
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -30,6 +31,11 @@ const main = async () => {
     })
 
     const app = express()
+
+    app.use(cors({
+        origin: 'http://localhost:3000',
+        credentials: true
+    }))
 
     const mongoURL = `mongodb+srv://${process.env.SESSION_DB_USERNAME_DEV_PROD}:${process.env.SESSION_DB_PASSWORD_DEV_PROD}@reddit.krfjg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
 
