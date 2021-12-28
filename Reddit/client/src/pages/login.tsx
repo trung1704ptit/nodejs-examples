@@ -6,7 +6,7 @@ import Wrapper from '../components/Wrapper';
 import { RegisterInput, useRegisterMutation } from '../generated/graphql';
 import { mapFieldError } from '../helpers/mapFieldErrors';
 
-const Register = () => {
+const Login = () => {
     const router = useRouter()
     const initialValues = {
         username: '',
@@ -70,4 +70,4 @@ const Register = () => {
     </Wrapper>
 }
 
-export default Register;
+export default Login;

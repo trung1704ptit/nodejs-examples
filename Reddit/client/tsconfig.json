@@ -22,6 +22,6 @@
     "isolatedModules": true,
     "jsx": "preserve"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/graphql-client/mutations/mutations.graphql"],
   "exclude": ["node_modules"]
 }
