@@ -1,5 +1,5 @@
 import { User } from '../entities/User'
-import { Mutation, Arg, Resolver, Ctx } from "type-graphql";
+import { Mutation, Arg, Resolver, Ctx, Query } from "type-graphql";
 import argon2 from 'argon2';
 import { UserMutationResponse } from '../types/UserMutationResponse';
 import { RegisterInput } from '../types/RegisterInput';
@@ -7,9 +7,20 @@ import { validateRegisterInput } from '../utils/validateRegisterInput';
 import { LoginInput } from '../types/LoginIput';
 import { Context } from '../types/Context';
 import { COOKIE_NAME } from '../utils/constants';
+import { ForgotPasswordInput } from '../types/UserTypes';
+import { sendEmail } from '../utils/sendEmail';
+import { TokenModel } from '../models/token';
 
 @Resolver()
 export class UserResolver {
+    @Query(_return => User, { nullable: true })
+    async me(
+        @Ctx() { req }: Context) : Promise<User | undefined | null>{
+        if (!req.session.userId) return null
+        const user = await User.findOne(req.session.userId)
+        return user
+    }
+
     @Mutation(_returns => UserMutationResponse, { nullable: true })
     async register(
         @Arg('registerInput') registerInput: RegisterInput,
@@ -79,12 +90,12 @@ export class UserResolver {
                 usernameOrEmail.includes('@') ? { email: usernameOrEmail } : { username: usernameOrEmail }
             )
 
-            if(!existingUser) {
+            if (!existingUser) {
                 return {
                     code: 400,
                     success: false,
                     message: 'User not found',
-                    errors: [{ field: 'usernameOrEmail', message: 'Username or email incorrect'}]
+                    errors: [{ field: 'usernameOrEmail', message: 'Username or email incorrect' }]
                 }
             }
 
@@ -94,7 +105,7 @@ export class UserResolver {
                     code: 400,
                     success: false,
                     message: 'Wrong password',
-                    errors: [{ field: 'password', message: 'Wrong password'}]
+                    errors: [{ field: 'password', message: 'Wrong password' }]
                 }
             }
             // create session and return cookie
@@ -127,17 +138,33 @@ export class UserResolver {
 
     @Mutation(() => Boolean)
     async logout(
-        @Ctx() { req, res}: Context
+        @Ctx() { req, res }: Context
     ): Promise<boolean> {
         return new Promise((resolve, _reject) => {
             res.clearCookie(COOKIE_NAME)
             req.session.destroy(error => {
-                if(error) {
+                if (error) {
                     console.log('Session error: ', error)
                     resolve(false)
                 }
                 resolve(true)
             })
         })
+    }
+
+    @Mutation(() => Boolean)
+    async forgotPassword(@Arg('forgotPasswordInput') forgotPasswordInput: ForgotPasswordInput): Promise<boolean> {
+        const user = await User.findOne({ email: forgotPasswordInput.email })
+        if (!user) {
+            return true
+        } else {
+            const token  = 'dsds'
+            // save token to database
+            await new TokenModel({userId: `${user.id}`, token}).save()
+
+            // send Email to guide reset password
+            await sendEmail(forgotPasswordInput.email, `<a href="http://localhost:3000/change-password?token=${token}">Please click here to reset your password</a>`)
+            return true
+        }
     }
 }

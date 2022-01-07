@@ -15,6 +15,7 @@ import { COOKIE_NAME, __prod__ } from './utils/constants'
 import { Context } from './types/Context';
 import { PostResolver } from './resolvers/post';
 import cors from 'cors'
+// import { sendEmail } from './utils/sendEmail'
 
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -29,6 +30,9 @@ const main = async () => {
         synchronize: true,
         entities: [User, Post]
     })
+
+
+    // await sendEmail("trung1704ptit@gmail.com", "<b>Hello world</b>")
 
     const app = express()
 
